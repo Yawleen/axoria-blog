@@ -18,3 +18,25 @@
 body {
   background-color: #f1f1f1;
 }
+
+
+/* Utils classes */
+
+.u-main-container {
+  @apply max-w-6xl mx-auto px-12;
+}
+
+.u-padding-content-container {
+  @apply pt-32 pb-44;
+}
+
+
+/* Typography */
+
+.t-main-title {
+  @apply font-inter font-bold text-zinc-900 text-4xl mb-2;
+}
+
+.t-main-subtitle {
+  @apply mb-12 text-zinc-700;
+}
