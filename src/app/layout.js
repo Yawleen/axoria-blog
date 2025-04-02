@@ -25,9 +25,11 @@ export default function RootLayout({ children }) {
         <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
       </head>
-      <body className={`${roboto.variable} ${inter.variable}`}>
+      <body
+        className={`${roboto.variable} ${inter.variable} flex min-h-full flex-col`}
+      >
         <Navbar />
-        {children}
+        <main className="grow">{children}</main>
         <Footer />
       </body>
     </html>
