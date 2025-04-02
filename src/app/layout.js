@@ -1,5 +1,6 @@
 import { Roboto, Inter } from "next/font/google";
 import "./globals.css";
+import Footer from "@/components/Footer";
 
 const roboto = Roboto({
   variable: "--font-roboto",
@@ -23,7 +24,10 @@ export default function RootLayout({ children }) {
         <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
       </head>
-      <body className={`${roboto.variable} ${inter.variable}`}>{children}</body>
+      <body className={`${roboto.variable} ${inter.variable}`}>
+        {children}
+        <Footer />
+      </body>
     </html>
   );
 }
