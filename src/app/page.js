@@ -1,22 +1,25 @@
 import { CATEGORIES_ROUTE, ARTICLE_ROUTE } from "@/config/routes";
+import { connectToDB } from "@/lib/utils/db/connectToDB";
 import Link from "next/link";
 
-export default async function Home() {
-  const posts = [
-    {
-      author: "John Doe",
-      title: "5 CSS tricks",
-    },
-    {
-      author: "Victor Wallas",
-      title: "How to code a navbar",
-    },
-    {
-      author: "Bruce Willis",
-      title: "How to setup TypeScript",
-    },
-  ];
+const posts = [
+  {
+    author: "John Doe",
+    title: "5 CSS tricks",
+  },
+  {
+    author: "Victor Wallas",
+    title: "How to code a navbar",
+  },
+  {
+    author: "Bruce Willis",
+    title: "How to setup TypeScript",
+  },
+];
 
+export default async function Home() {
+  await connectToDB();
+  
   return (
     <div className="u-main-container u-padding-content-container">
       <h1 className="t-main-title">Restez à jour avec Axoria Blog</h1>
