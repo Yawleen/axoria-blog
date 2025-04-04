@@ -1,10 +1,13 @@
 "use client";
 
+import { addPost } from "@/lib/serverActions/blog/postServerActions";
+
 export default function CreateArticlePage() {
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
     const formData = new FormData(e.target);
+    const result = await addPost(formData);
   };
 
   return (
