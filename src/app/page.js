@@ -1,25 +1,13 @@
 import { CATEGORIES_ROUTE, ARTICLE_ROUTE } from "@/config/routes";
 import { connectToDB } from "@/lib/utils/db/connectToDB";
 import Link from "next/link";
-
-const posts = [
-  {
-    author: "John Doe",
-    title: "5 CSS tricks",
-  },
-  {
-    author: "Victor Wallas",
-    title: "How to code a navbar",
-  },
-  {
-    author: "Bruce Willis",
-    title: "How to setup TypeScript",
-  },
-];
+import { getPosts } from "@/lib/serverMethods/blog/postMethods";
 
 export default async function Home() {
   await connectToDB();
-  
+
+  const { posts } = await getPosts();
+
   return (
     <div className="u-main-container u-padding-content-container">
       <h1 className="t-main-title">Restez à jour avec Axoria Blog</h1>
@@ -27,7 +15,7 @@ export default async function Home() {
 
       <p className="text-md text-zinc-900">Derniers articles</p>
       <ul className="u-articles-grid">
-        {posts.map((post, i) => (
+        {posts?.map((post, i) => (
           <li
             key={i}
             className="rounded-sm border shadow-md hover:shadow-xl hover:border-zinc-300"
@@ -45,14 +33,14 @@ export default async function Home() {
                   })}
                 </time>
                 <Link
-                  href={`${CATEGORIES_ROUTE}/author/${post.author}`}
+                  href={`${CATEGORIES_ROUTE}/author/johndoe`}
                   className="ml-auto text-base text-gray-700 hover:text-gray-600 whitespace-nowrap truncate"
                 >
-                  {post.author}
+                  John Doe
                 </Link>
               </div>
               <Link
-                href={`${ARTICLE_ROUTE}/${post.title}`}
+                href={`${ARTICLE_ROUTE}/${post.slug}`}
                 className="inline-block mt-6 text-xl font-semibold text-zinc-800 hover:text-zinc-600"
               >
                 {post.title}
