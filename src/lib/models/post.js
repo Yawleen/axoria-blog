@@ -15,6 +15,12 @@ const postSchema = new mongoose.Schema(
       type: String,
       unique: true,
     },
+    tags: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Tag",
+      },
+    ],
   },
   { timestamps: true }
 );
