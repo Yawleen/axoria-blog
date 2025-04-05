@@ -19,6 +19,9 @@ body {
   background-color: #f1f1f1;
 }
 
+button {
+  cursor: pointer;
+}
 
 /* Utils classes */
 
