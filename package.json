@@ -9,6 +9,7 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "bcryptjs": "^3.0.2",
     "dompurify": "^3.2.5",
     "jsdom": "^26.0.0",
     "marked": "^15.0.7",
