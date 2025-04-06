@@ -2,6 +2,7 @@ import { getPost } from "@/lib/serverMethods/blog/postMethods";
 import { CATEGORIES_ROUTE } from "@/config/routes";
 import Link from "next/link";
 import "./article-styles.css";
+import "prism-themes/themes/prism-atom-dark.css";
 
 export default async function page({ params }) {
   const { slug } = await params;
@@ -21,7 +22,10 @@ export default async function page({ params }) {
           </Link>
         ))}
       </p>
-      <div className="article-styles" dangerouslySetInnerHTML={{ __html: post.markdownHTMLResult }}></div>
+      <div
+        className="article-styles"
+        dangerouslySetInnerHTML={{ __html: post.markdownHTMLResult }}
+      ></div>
     </main>
   );
 }
