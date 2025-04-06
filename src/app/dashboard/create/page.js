@@ -1,6 +1,7 @@
 "use client";
 
 import { addPost } from "@/lib/serverActions/blog/postServerActions";
+import { set } from "mongoose";
 import { useState, useRef } from "react";
 
 export default function CreateArticlePage() {
@@ -51,6 +52,8 @@ export default function CreateArticlePage() {
     if (tagError) {
       setTagError("");
     }
+
+    tagInput.current.value = "";
 
     addTag(tag);
   };
