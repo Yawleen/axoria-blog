@@ -4,7 +4,7 @@ import Link from "next/link";
 import "./article-styles.css";
 import "prism-themes/themes/prism-atom-dark.css";
 
-export default async function page({ params }) {
+export default async function ArticlePage({ params }) {
   const { slug } = await params;
   const { post } = await getPost(slug);
 
