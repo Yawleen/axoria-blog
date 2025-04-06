@@ -1,20 +1,53 @@
 "use client";
 
 import { addPost } from "@/lib/serverActions/blog/postServerActions";
-import { set } from "mongoose";
 import { useState, useRef } from "react";
+import { useRouter } from "next/navigation";
+import { ARTICLE_ROUTE } from "@/config/routes";
 
 export default function CreateArticlePage() {
   const tagInput = useRef(null);
   const [tags, setTags] = useState([]);
   const [tagError, setTagError] = useState("");
+  const submitButtonRef = useRef(null);
+  const serverValidationText = useRef(null);
+  const router = useRouter();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
 
     const formData = new FormData(e.target);
-    formData.set("tags", JSON.stringify(tags))
-    const result = await addPost(formData);
+    formData.set("tags", JSON.stringify(tags));
+
+    serverValidationText.current.textContent = "";
+    submitButtonRef.current.textContent = "Création de l'article...";
+    submitButtonRef.current.disabled = true;
+
+    try {
+      const result = await addPost(formData);
+
+      if (result.success) {
+        submitButtonRef.current.textContent = "Article créé avec succès";
+
+        let countdown = 3;
+
+        serverValidationText.current.textContent = `Redirection dans ${countdown}...`;
+
+        const interval = setInterval(() => {
+          countdown--;
+          serverValidationText.current.textContent = `Redirection dans ${countdown}...`;
+
+          if (countdown === 0) {
+            clearInterval(interval);
+            router.push(`${ARTICLE_ROUTE}/${result.slug}`);
+          }
+        }, 1000);
+      }
+    } catch (error) {
+      submitButtonRef.current.textContent = "Soumettre";
+      serverValidationText.current.textContent = `${error.message}`;
+      submitButtonRef.current.disabled = false;
+    }
   };
 
   const addTag = (tag) => {
@@ -32,9 +65,7 @@ export default function CreateArticlePage() {
   };
 
   const removeTag = (tag) => {
-    const tagIndex = tags.findIndex(
-      (userTag) => userTag === tag
-    );
+    const tagIndex = tags.findIndex((userTag) => userTag === tag);
     const tagsCopy = [...tags];
 
     tagsCopy.splice(tagIndex, 1);
@@ -59,12 +90,12 @@ export default function CreateArticlePage() {
   };
 
   const handleEnterOnTagInput = (e) => {
-    if(e.key === "Enter") {
+    if (e.key === "Enter") {
       e.preventDefault();
 
       handleAddTag();
     }
-  }
+  };
 
   return (
     <main className="u-main-container bg-white p-7 mt-32 mb-44">
@@ -106,9 +137,16 @@ export default function CreateArticlePage() {
             <div className="grow shadow border rounded p-3 text-gray-700">
               <ul className="flex flex-wrap items-center gap-2">
                 {tags.map((tag) => (
-                  <li key={tag} className="flex items-center gap-x-1 bg-gray-200 text-gray-700 rounded-full px-3 py-1 text-sm font-semibold">
+                  <li
+                    key={tag}
+                    className="flex items-center gap-x-1 bg-gray-200 text-gray-700 rounded-full px-3 py-1 text-sm font-semibold"
+                  >
                     {tag}
-                    <button type="button" className="text-red-500" onClick={() => removeTag(tag)}>
+                    <button
+                      type="button"
+                      className="text-red-500"
+                      onClick={() => removeTag(tag)}
+                    >
                       &times;
                     </button>
                   </li>
@@ -116,7 +154,9 @@ export default function CreateArticlePage() {
               </ul>
             </div>
           </div>
-          {tagError && <p className="text-red-600 text-sm font-semibold">{tagError}</p>}
+          {tagError && (
+            <p className="text-red-600 text-sm font-semibold">{tagError}</p>
+          )}
         </div>
         <label htmlFor="markdownArticle" className="f-label">
           Rédiger votre article avec markdown (inutile de répéter le titre)
@@ -134,9 +174,13 @@ export default function CreateArticlePage() {
           className="min-h-44 text-xl shadow appearance-none border rounded w-full p-8 text-gray-700 mb-4 focus:outline-slate-400"
           required
         ></textarea>
-        <button className="min-w-44 bg-indigo-500 hover:bg-indigo-700 text-white font-bold py-3 px-4 rounded border-none">
+        <button
+          ref={submitButtonRef}
+          className="min-w-44 bg-indigo-500 hover:bg-indigo-700 text-white font-bold py-3 px-4 rounded border-none mb-4"
+        >
           Soumettre
         </button>
+        <p className="font-bold" ref={serverValidationText}></p>
       </form>
     </main>
   );
