@@ -4,6 +4,9 @@ import { connectToDB } from "@/lib/utils/db/connectToDB";
 import { Post } from "@/lib/models/post";
 import { Tag } from "@/lib/models/tag";
 import slugify from "slugify";
+import { marked } from "marked";
+import { JSDOM } from "jsdom";
+import createDOMPurify from "dompurify"
 
 export async function addPost(formData) {
   const { title, markdownArticle, tags } = Object.fromEntries(formData);
@@ -30,9 +33,13 @@ export async function addPost(formData) {
       })
     );
 
+
+    let markdownHTMLResult = marked(markdownArticle);
+
     const newPost = new Post({
       title,
       markdownArticle,
+      markdownHTMLResult,
       tags: tagIds,
     });
 

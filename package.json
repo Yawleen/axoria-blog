@@ -9,6 +9,9 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "dompurify": "^3.2.5",
+    "jsdom": "^26.0.0",
+    "marked": "^15.0.7",
     "mongodb": "^6.15.0",
     "mongoose": "^8.13.1",
     "next": "15.2.4",
