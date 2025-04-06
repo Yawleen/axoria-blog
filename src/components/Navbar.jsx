@@ -8,8 +8,8 @@ export default function Navbar() {
                 <Link href={HOME_ROUTE} className="uppercase mr-4 text-zinc-900">Axoria</Link>
                 <Link href={CATEGORIES_ROUTE} className="text-zinc-900 mr-auto">Catégories</Link>
                 <Link href={DASHBOARD_CREATE_ROUTE} className="text-zinc-900">Ajouter un article</Link>
-                <Link href={SIGN_UP_ROUTE} className="text-zinc-900">S'inscrire</Link>
-                <Link href={SIGN_IN_ROUTE} className="text-zinc-900 mr-2">Se connecter</Link>
+                <Link href={SIGN_UP_ROUTE} className="text-zinc-900 mr-2">S'inscrire</Link>
+                <Link href={SIGN_IN_ROUTE} className="text-zinc-900">Se connecter</Link>
             </div>
         </nav>
     )
