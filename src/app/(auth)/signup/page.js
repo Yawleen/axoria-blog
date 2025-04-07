@@ -1,8 +1,55 @@
+"use client";
+
 import Link from "next/link";
+import { useRef } from "react";
+import { register } from "@/lib/serverActions/session/sessionServerActions";
+import { useRouter } from "next/navigation";
+import { HOME_ROUTE } from "@/config/routes";
 
 export default function SignUpPage() {
+  const serverInfoRef = useRef(null);
+  const submitButtonRef = useRef(null);
+  const router = useRouter();
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    const formData = new FormData(e.target);
+
+    serverInfoRef.current.classList.add("hidden");
+    serverInfoRef.current.textContent = "";
+    submitButtonRef.current.textContent = "Création de l'utilisateur...";
+    submitButtonRef.current.disabled = true;
+
+    try {
+      const result = await register(formData);
+
+      if (result.success) {
+        submitButtonRef.current.textContent = "Utilisateur créé avec succès";
+
+        let countdown = 3;
+        serverInfoRef.current.classList.remove("hidden");
+        serverInfoRef.current.textContent = `Redirection dans ${countdown}...`;
+
+        const interval = setInterval(() => {
+          countdown--;
+          serverInfoRef.current.textContent = `Redirection dans ${countdown}...`;
+
+          if (countdown === 0) {
+            clearInterval(interval);
+            router.push(HOME_ROUTE);
+          }
+        }, 1000);
+      }
+    } catch (error) {
+      submitButtonRef.current.textContent = "Soumettre";
+      serverInfoRef.current.textContent = `${error.message}`;
+      submitButtonRef.current.disabled = false;
+    }
+  };
+
   return (
-    <form className="max-w-md mx-auto my-36">
+    <form onSubmit={handleSubmit} className="max-w-md mx-auto my-36">
       <label htmlFor="userName" className="f-label">
         Nom ou pseudo
       </label>
@@ -52,12 +99,13 @@ export default function SignUpPage() {
       />
 
       <button
+        ref={submitButtonRef}
         className="w-full bg-indigo-500 hover:bg-indigo-700 text-white font-bold
        py-3 px-4 my-10 rounded border-none"
       >
         Soumettre
       </button>
-      <p className="hidden text-center mb-10"></p>
+      <p ref={serverInfoRef} className="hidden text-center mb-10"></p>
       <Link
         href="/signin"
         className="underline text-blue-600 block text-center"
