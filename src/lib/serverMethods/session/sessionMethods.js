@@ -6,7 +6,7 @@ import { connectToDB } from "@/lib/utils/db/connectToDB";
 export async function sessionInfo() {
   const cookieStore = await cookies();
 
-  const sessionId = cookieStore.get(sessionId)?.value;
+  const sessionId = cookieStore.get("sessionId")?.value;
 
   if (!sessionId) {
     return { success: false };
