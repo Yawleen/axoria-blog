@@ -4,8 +4,6 @@ import Link from "next/link";
 import { getPosts } from "@/lib/serverMethods/blog/postMethods";
 
 export default async function Home() {
-  await connectToDB();
-
   const { posts } = await getPosts();
 
   return (
