@@ -3,18 +3,26 @@
 import { useRef, useEffect, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { DASHBOARD_ROUTE } from "@/config/routes";
-import { logout } from "@/lib/serverActions/session/sessionServerActions";
+import { DASHBOARD_ROUTE, SIGN_IN_ROUTE } from "@/config/routes";
+import { isPrivatePage, logout } from "@/lib/serverActions/session/sessionServerActions";
+import { useRouter } from "next/navigation";
+import { usePathname } from "next/navigation";
 
 export default function NavbarDropdown() {
     const [isOpen, setIsOpen] = useState(false);
     const dropdownRef = useRef(null);
+    const router = useRouter();
+    const pathname = usePathname();
 
     const toggleDropdown = () => setIsOpen(!isOpen);
     const closeDropdown = () => setIsOpen(false);
 
-    const handleLogout = async () => { 
+    const handleLogout = async () => {
         await logout();
+
+        if (isPrivatePage(pathname)) {
+            router.push(SIGN_IN_ROUTE);
+        }
     };
 
     useEffect(() => {

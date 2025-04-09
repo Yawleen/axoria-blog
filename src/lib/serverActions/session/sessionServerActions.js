@@ -6,6 +6,7 @@ import slugify from "slugify";
 import bcrypt from "bcryptjs";
 import { Session } from "@/lib/models/session";
 import { cookies } from "next/headers";
+import { DASHBOARD_ROUTE, SETTINGS_ROUTE } from "@/config/routes";
 
 export async function register(formData) {
   const { userName, email, password, passwordRepeat } =
@@ -138,4 +139,12 @@ export async function logout() {
   } catch (error) {
     console.log(error);
   }
+}
+
+export async function isPrivatePage(pathname) {
+  const privateSegments = [DASHBOARD_ROUTE, `${SETTINGS_ROUTE}/profile`];
+
+  return privateSegments.some(
+    (segment) => pathname === segment || path.startsWith(segment + "/")
+  );
 }
