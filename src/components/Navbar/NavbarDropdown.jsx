@@ -4,6 +4,7 @@ import { useRef, useEffect, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { DASHBOARD_ROUTE } from "@/config/routes";
+import { logout } from "@/lib/serverActions/session/sessionServerActions";
 
 export default function NavbarDropdown() {
     const [isOpen, setIsOpen] = useState(false);
@@ -12,7 +13,9 @@ export default function NavbarDropdown() {
     const toggleDropdown = () => setIsOpen(!isOpen);
     const closeDropdown = () => setIsOpen(false);
 
-    const handleLogout = () => { };
+    const handleLogout = async () => { 
+        await logout();
+    };
 
     useEffect(() => {
         const handleClickOutside = (e) => {

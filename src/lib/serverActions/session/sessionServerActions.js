@@ -118,3 +118,24 @@ export async function login(formData) {
     );
   }
 }
+
+export async function logout() {
+  const cookieStore = await cookies();
+  const sessionId = cookieStore.get("sessionId")?.value;
+
+  try {
+    await Session.findByIdAndDelete(sessionId);
+
+    cookieStore.set("sessionId", "", {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      path: "/",
+      maxAge: 0,
+      sameSite: "script",
+    });
+
+    return { success: true };
+  } catch (error) {
+    console.log(error);
+  }
+}
