@@ -43,6 +43,7 @@ export default function SignUpPage() {
       }
     } catch (error) {
       submitButtonRef.current.textContent = "Soumettre";
+      serverInfoRef.current.classList.remove("hidden");
       serverInfoRef.current.textContent = `${error.message}`;
       submitButtonRef.current.disabled = false;
     }

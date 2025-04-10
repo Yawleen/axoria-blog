@@ -7,32 +7,54 @@ import bcrypt from "bcryptjs";
 import { Session } from "@/lib/models/session";
 import { cookies } from "next/headers";
 import { DASHBOARD_ROUTE, SETTINGS_ROUTE } from "@/config/routes";
+import AppError from "@/lib/utils/errorHandling/customError";
 
 export async function register(formData) {
   const { userName, email, password, passwordRepeat } =
     Object.fromEntries(formData);
 
-  if (userName.length < 3) {
-    throw new Error(
-      "Le nom d'utilisateur doit contenir au moins 3 caractères."
-    );
-  }
-
-  if (password.length < 6) {
-    throw new Error("Le mot de passe doit contenir au moins 6 caractères.");
-  }
-
-  if (password !== passwordRepeat) {
-    throw new Error("Les mots de passe saisis ne sont pas identiques.");
-  }
-
   try {
-    connectToDB();
+    if (typeof userName !== "string" || userName.trim().length < 3) {
+      throw new AppError(
+        "Le nom d'utilisateur doit contenir au moins 3 caractères."
+      );
+    }
 
-    const user = await User.findOne({ userName });
+    if (typeof password !== "string" || password.trim().length < 6) {
+      throw new AppError(
+        "Le mot de passe doit contenir au moins 6 caractères."
+      );
+    }
+
+    if (password !== passwordRepeat) {
+      throw new AppError("Les mots de passe saisis ne sont pas identiques.");
+    }
+
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+    if (typeof email !== "string" || !emailRegex.test(email.trim())) {
+      throw new AppError("Le format de l'email est invalide.");
+    }
+
+    await connectToDB();
+
+    const user = await User.findOne({
+      $or: [
+        {
+          userName,
+        },
+        {
+          email,
+        },
+      ],
+    });
 
     if (user) {
-      throw new Error("L'utilisateur existe déjà.");
+      throw new AppError(
+        `${
+          user.userName === userName ? "L'utilisateur" : "L'adresse mail"
+        } existe déjà.`
+      );
     }
 
     const normalizedUserName = slugify(userName, { lower: true, strict: true });
@@ -51,14 +73,13 @@ export async function register(formData) {
 
     return { success: true };
   } catch (err) {
-    console.log(
-      "Une erreur est survenue au moment de la création de l'utilisateur :",
-      err
-    );
-    throw new Error(
-      err.message ||
-        "Une erreur est survenue au moment de la création de l'utilisateur."
-    );
+    console.error("Erreur lors de l'inscription :", err);
+
+    if (err instanceof AppError) {
+      throw err;
+    }
+
+    throw new Error("Une erreur est survenue lors de l'inscription.");
   }
 }
 
