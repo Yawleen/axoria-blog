@@ -12,6 +12,8 @@ import { markedHighlight } from "marked-highlight";
 import "prismjs/components/prism-markup";
 import "prismjs/components/prism-css";
 import "prismjs/components/prism-javascript";
+import AppError from "@/lib/utils/errorHandling/customError";
+import { sessionInfo } from "@/lib/serverMethods/session/sessionMethods";
 
 const window = new JSDOM("").window;
 const DOMPurify = createDOMPurify(window);
@@ -20,9 +22,33 @@ export async function addPost(formData) {
   const { title, markdownArticle, tags } = Object.fromEntries(formData);
 
   try {
+    if (typeof title !== "string" || title.trim().length < 3) {
+      throw new AppError("Titre invalide.");
+    }
+
+    if (
+      typeof markdownArticle !== "string" ||
+      markdownArticle.trim().length === 0
+    ) {
+      throw new AppError("Markdown invalide.");
+    }
+
     await connectToDB();
 
+    const session = await sessionInfo();
+
+    if (!session.success) {
+      throw new AppError("Authentification requise.");
+    }
+
+    if (typeof tags !== "string") {
+      throw new AppError("Données invalides.");
+    }
+
     const tagNamesArray = JSON.parse(tags);
+    if (!Array.isArray(tagNamesArray)) {
+      throw new AppError("Les tags doivent être un tableau valide.");
+    }
 
     const tagIds = await Promise.all(
       tagNamesArray.map(async (tagName) => {
@@ -78,12 +104,12 @@ export async function addPost(formData) {
     console.log("Post sauvegardé avec succès.");
     return { success: true, slug: savedPost.slug };
   } catch (err) {
-    console.log(
-      "Une erreur est survenue au moment de la création du post :",
-      err
-    );
-    throw new Error(
-      err.message || "Une erreur est survenue au moment de la création du post."
-    );
+    console.error("Erreur lors de la création du post :", err);
+
+    if (err instanceof AppError) {
+      throw err;
+    }
+
+    throw new Error("Une erreur est survenue lors de la création du post.");
   }
 }
