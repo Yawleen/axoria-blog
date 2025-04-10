@@ -1,42 +1,25 @@
 import { connectToDB } from "@/lib/utils/db/connectToDB";
 import { Post } from "@/lib/models/post";
 import { Tag } from "@/lib/models/tag";
+import { notFound } from "next/navigation";
 
 export async function getPost(slug) {
-  try {
-    await connectToDB();
+  await connectToDB();
 
-    const post = await Post.findOne({ slug }).populate({
-      path: "tags",
-      select: "name slug"
-    });
-    return { success: true, post };
-  } catch (err) {
-    console.log(
-      "Une erreur est survenue au moment de la récupération du post :",
-      err
-    );
-    throw new Error(
-      err.message ||
-        "Une erreur est survenue au moment de la récupération du post."
-    );
-  }
+  const post = await Post.findOne({ slug }).populate({
+    path: "tags",
+    select: "name slug",
+  });
+
+  if (!post) return notFound();
+
+  return { success: true, post };
 }
 
 export async function getPosts() {
-  try {
-    await connectToDB();
+  await connectToDB();
 
-    const posts = await Post.find();
-    return { success: true, posts };
-  } catch (err) {
-    console.log(
-      "Une erreur est survenue au moment de la récupération des posts :",
-      err
-    );
-    throw new Error(
-      err.message ||
-        "Une erreur est survenue au moment de la récupération des posts."
-    );
-  }
+  const posts = await Post.find();
+
+  return { success: true, posts };
 }
