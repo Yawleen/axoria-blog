@@ -3,6 +3,7 @@ import { CATEGORIES_ROUTE } from "@/config/routes";
 import Link from "next/link";
 import "./article-styles.css";
 import "prism-themes/themes/prism-atom-dark.css";
+import Image from "next/image";
 
 export default async function ArticlePage({ params }) {
   const { slug } = await params;
@@ -19,15 +20,24 @@ export default async function ArticlePage({ params }) {
           {post.author.userName}
         </Link>
       </p>
-      {post.tags.map((tag) => (
-        <Link
-          key={tag.slug}
-          href={`${CATEGORIES_ROUTE}/tag/${tag.slug}`}
-          className="mr-4 underline"
-        >
-          #{tag.name}
-        </Link>
-      ))}
+      <div className="mb-6">
+        {post.tags.map((tag) => (
+          <Link
+            key={tag.slug}
+            href={`${CATEGORIES_ROUTE}/tag/${tag.slug}`}
+            className="mr-4 underline"
+          >
+            #{tag.name}
+          </Link>
+        ))}
+      </div>
+      <Image
+        src={post.imageURL}
+        width={1280}
+        height={720}
+        alt={post.title}
+        className="mb-10"
+      />
       <div
         className="article-styles"
         dangerouslySetInnerHTML={{ __html: post.markdownHTMLResult }}
