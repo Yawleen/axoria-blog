@@ -1,15 +1,10 @@
 import Link from "next/link";
 import { ARTICLE_ROUTE, DASHBOARD_ROUTE } from "@/config/routes";
+import { getUserPostsFromUserID } from "@/lib/serverMethods/blog/postMethods";
 
 export default async function UserDashboardPage({ params }) {
   const { userId } = await params;
-  const posts = [
-    {
-      _id: "1234",
-      title: "Deuxième article",
-      slug: "deuxieme-article",
-    },
-  ];
+  const posts = await getUserPostsFromUserID(userId);
 
   return (
     <main className="u-main-container u-padding-content-container">
