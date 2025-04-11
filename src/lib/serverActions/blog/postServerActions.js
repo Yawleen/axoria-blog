@@ -19,7 +19,8 @@ const window = new JSDOM("").window;
 const DOMPurify = createDOMPurify(window);
 
 export async function addPost(formData) {
-  const { title, markdownArticle, tags } = Object.fromEntries(formData);
+  const { title, markdownArticle, tags, imageURL } =
+    Object.fromEntries(formData);
 
   try {
     if (typeof title !== "string" || title.trim().length < 3) {
@@ -31,6 +32,10 @@ export async function addPost(formData) {
       markdownArticle.trim().length === 0
     ) {
       throw new AppError("Markdown invalide.");
+    }
+
+    if (typeof imageURL !== "string") {
+      throw new AppError("URL invalide.");
     }
 
     await connectToDB();
@@ -98,6 +103,7 @@ export async function addPost(formData) {
       markdownArticle,
       markdownHTMLResult,
       tags: tagIds,
+      imageURL,
     });
 
     const savedPost = await newPost.save();
