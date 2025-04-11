@@ -6,10 +6,15 @@ import { notFound } from "next/navigation";
 export async function getPost(slug) {
   await connectToDB();
 
-  const post = await Post.findOne({ slug }).populate({
-    path: "tags",
-    select: "name slug",
-  });
+  const post = await Post.findOne({ slug })
+    .populate({
+      path: "author",
+      select: "userName normalizedUserName",
+    })
+    .populate({
+      path: "tags",
+      select: "name slug",
+    });
 
   if (!post) return notFound();
 
