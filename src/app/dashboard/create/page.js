@@ -9,10 +9,12 @@ import { getImagesFromPexels } from "@/lib/serverActions/blog/imagesServerAction
 export default function CreateArticlePage() {
   const tagInput = useRef(null);
   const imageInput = useRef(null);
+  const searchImageButton = useRef(null);
   const [tags, setTags] = useState([]);
   const [tagError, setTagError] = useState("");
   const [imagesError, setImagesError] = useState("");
   const [images, setImages] = useState([]);
+  const [selectedImageURL, setSelectedImageURL] = useState("");
   const submitButtonRef = useRef(null);
   const serverValidationText = useRef(null);
   const router = useRouter();
@@ -20,8 +22,17 @@ export default function CreateArticlePage() {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
+    if (!selectedImageURL) {
+      setImagesError(
+        "Veuillez sélectionner une image avant de soumettre le formulaire."
+      );
+      return;
+    }
+
     const formData = new FormData(e.target);
+
     formData.set("tags", JSON.stringify(tags));
+    formData.set("imageURL", selectedImageURL);
 
     serverValidationText.current.textContent = "";
     submitButtonRef.current.textContent = "Création de l'article...";
@@ -106,22 +117,24 @@ export default function CreateArticlePage() {
 
     setImages([]);
     setImagesError("");
+    imageInput.current.value = "";
+    searchImageButton.current.disabled = true;
 
     if (imageInputValue) {
       const images = await getImagesFromPexels(imageInputValue);
 
       if (images.length > 0) {
         setImages(images);
-        return;
+      } else {
+        setImagesError(
+          "Aucune image n'a été trouvée. Veuillez retaper un autre mot-clé."
+        );
       }
-
-      setImagesError(
-        "Aucune image n'a été trouvée. Veuillez retaper un autre mot-clé."
-      );
-      return;
+    } else {
+      setImagesError("Veuillez saisir un mot-clé avant la recherche.");
     }
 
-    setImagesError("Veuillez saisir un mot-clé avant la recherche.");
+    searchImageButton.current.disabled = false;
   };
 
   const handleEnterOnImageInput = (e) => {
@@ -131,6 +144,8 @@ export default function CreateArticlePage() {
       handleSearchImage();
     }
   };
+
+  const selectImage = (source) => setSelectedImageURL(source);
 
   return (
     <main className="u-main-container bg-white p-7 mt-32 mb-44">
@@ -206,9 +221,9 @@ export default function CreateArticlePage() {
               className="grow shadow border rounded p-3 text-gray-700 focus:outline-slate-400"
               placeholder="Taper un mot-clé pour rechercher des images"
               id="image"
-              required
             />
             <button
+              ref={searchImageButton}
               type="button"
               onClick={handleSearchImage}
               className="bg-indigo-500 hover:bg-indigo-700 text-white font-bold p-4 rounded"
@@ -217,13 +232,18 @@ export default function CreateArticlePage() {
             </button>
           </div>
           {images.length > 0 && (
-            <div className="grid grid-cols-2 md:grid-cols-3 gap-4 max-h-[200px] overflow-y-auto mb-2">
+            <div className="grid grid-cols-2 md:grid-cols-3 gap-4 p-4 max-h-[200px] overflow-y-auto mb-2">
               {images.map((img) => (
                 <img
                   key={img.id}
                   src={img.src.medium}
                   alt={img.alt}
-                  className="w-full h-full object-cover rounded cursor-pointer"
+                  className={`${
+                    img.src.large === selectedImageURL
+                      ? "border-indigo-500 scale-105"
+                      : "border-transparent"
+                  } border border-3 w-full h-full object-cover rounded cursor-pointer`}
+                  onClick={() => selectImage(img.src.large)}
                 />
               ))}
             </div>
