@@ -16,7 +16,7 @@ export default async function Navbar() {
                     session.success ? (
                         <>
                             <Link href={`${DASHBOARD_ROUTE}/create`} className="text-zinc-900 mr-2">Ajouter un article</Link>
-                            <NavbarDropdown />
+                            <NavbarDropdown userId={session.userId} />
                         </>
                     ) : (
                         <>

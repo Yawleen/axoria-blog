@@ -8,7 +8,7 @@ import { isPrivatePage, logout } from "@/lib/serverActions/session/sessionServer
 import { useRouter } from "next/navigation";
 import { usePathname } from "next/navigation";
 
-export default function NavbarDropdown() {
+export default function NavbarDropdown({ userId }) {
     const [isOpen, setIsOpen] = useState(false);
     const dropdownRef = useRef(null);
     const router = useRouter();
@@ -51,7 +51,7 @@ export default function NavbarDropdown() {
                 <ul className="absolute right-0 top-9.5 w-[250px] border-b border-x border-zinc-300">
                     <li
                         className="bg-slate-50 hover:bg-slate-200">
-                        <Link onClick={closeDropdown} href={DASHBOARD_ROUTE} className="block p-4">
+                        <Link onClick={closeDropdown} href={`${DASHBOARD_ROUTE}/${userId}`} className="block p-4">
                             Dashboard
                         </Link>
                     </li>
