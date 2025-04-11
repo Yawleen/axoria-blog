@@ -12,16 +12,22 @@ export default async function ArticlePage({ params }) {
     <main className="u-main-container u-padding-content-container">
       <h1 className="text-4xl mb-3">{post.title}</h1>
       <p className="mb-6">
-        {post.tags.map((tag) => (
-          <Link
-            key={tag.slug}
-            href={`${CATEGORIES_ROUTE}/tag/${tag.slug}`}
-            className="mr-4 underline"
-          >
-            #{tag.name}
-          </Link>
-        ))}
+        Par{" "}
+        <Link
+          href={`${CATEGORIES_ROUTE}/author/${post.author.normalizedUserName}`}
+        >
+          {post.author.userName}
+        </Link>
       </p>
+      {post.tags.map((tag) => (
+        <Link
+          key={tag.slug}
+          href={`${CATEGORIES_ROUTE}/tag/${tag.slug}`}
+          className="mr-4 underline"
+        >
+          #{tag.name}
+        </Link>
+      ))}
       <div
         className="article-styles"
         dangerouslySetInnerHTML={{ __html: post.markdownHTMLResult }}
