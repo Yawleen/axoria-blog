@@ -104,6 +104,7 @@ export async function addPost(formData) {
       markdownHTMLResult,
       tags: tagIds,
       imageURL,
+      author: session.userId
     });
 
     const savedPost = await newPost.save();
