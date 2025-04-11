@@ -4,11 +4,15 @@ import { addPost } from "@/lib/serverActions/blog/postServerActions";
 import { useState, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { ARTICLE_ROUTE } from "@/config/routes";
+import { getImagesFromPexels } from "@/lib/serverActions/blog/imagesServerAction";
 
 export default function CreateArticlePage() {
   const tagInput = useRef(null);
+  const imageInput = useRef(null);
   const [tags, setTags] = useState([]);
   const [tagError, setTagError] = useState("");
+  const [imagesError, setImagesError] = useState("");
+  const [images, setImages] = useState([]);
   const submitButtonRef = useRef(null);
   const serverValidationText = useRef(null);
   const router = useRouter();
@@ -97,6 +101,37 @@ export default function CreateArticlePage() {
     }
   };
 
+  const handleSearchImage = async () => {
+    const imageInputValue = imageInput.current.value.trim();
+
+    setImages([]);
+    setImagesError("");
+
+    if (imageInputValue) {
+      const images = await getImagesFromPexels(imageInputValue);
+
+      if (images.length > 0) {
+        setImages(images);
+        return;
+      }
+
+      setImagesError(
+        "Aucune image n'a été trouvée. Veuillez retaper un autre mot-clé."
+      );
+      return;
+    }
+
+    setImagesError("Veuillez saisir un mot-clé avant la recherche.");
+  };
+
+  const handleEnterOnImageInput = (e) => {
+    if (e.key === "Enter") {
+      e.preventDefault();
+
+      handleSearchImage();
+    }
+  };
+
   return (
     <main className="u-main-container bg-white p-7 mt-32 mb-44">
       <h1 className="text-4xl mb-4">Rédiger un article</h1>
@@ -135,7 +170,7 @@ export default function CreateArticlePage() {
               Ajouter
             </button>
             <div className="grow shadow border rounded p-3 text-gray-700">
-              <ul className="flex flex-wrap items-center gap-2">
+              <ul className="flex flex-wrap items-center gap-2 min-h-[30px]">
                 {tags.map((tag) => (
                   <li
                     key={tag}
@@ -156,6 +191,45 @@ export default function CreateArticlePage() {
           </div>
           {tagError && (
             <p className="text-red-600 text-sm font-semibold">{tagError}</p>
+          )}
+        </div>
+        <label htmlFor="image" className="f-label">
+          Sélectionnez une image
+        </label>
+        <div className="mb-6">
+          <div className="flex flex-wrap gap-3 mb-2">
+            <input
+              ref={imageInput}
+              onKeyDown={handleEnterOnImageInput}
+              type="text"
+              name="image"
+              className="grow shadow border rounded p-3 text-gray-700 focus:outline-slate-400"
+              placeholder="Taper un mot-clé pour rechercher des images"
+              id="image"
+              required
+            />
+            <button
+              type="button"
+              onClick={handleSearchImage}
+              className="bg-indigo-500 hover:bg-indigo-700 text-white font-bold p-4 rounded"
+            >
+              Rechercher
+            </button>
+          </div>
+          {images.length > 0 && (
+            <div className="grid grid-cols-2 md:grid-cols-3 gap-4 max-h-[200px] overflow-y-auto mb-2">
+              {images.map((img) => (
+                <img
+                  key={img.id}
+                  src={img.src.medium}
+                  alt={img.alt}
+                  className="w-full h-full object-cover rounded cursor-pointer"
+                />
+              ))}
+            </div>
+          )}
+          {imagesError && (
+            <p className="text-red-600 text-sm font-semibold">{imagesError}</p>
           )}
         </div>
         <label htmlFor="markdownArticle" className="f-label">
