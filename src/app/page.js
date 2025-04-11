@@ -1,7 +1,7 @@
-import { CATEGORIES_ROUTE, ARTICLE_ROUTE } from "@/config/routes";
-import { connectToDB } from "@/lib/utils/db/connectToDB";
 import Link from "next/link";
 import { getPosts } from "@/lib/serverMethods/blog/postMethods";
+import BlogCard from "@/components/BlogCard";
+import { DASHBOARD_ROUTE } from "@/config/routes";
 
 export default async function Home() {
   const { posts } = await getPosts();
@@ -11,42 +11,26 @@ export default async function Home() {
       <h1 className="t-main-title">Restez à jour avec Axoria Blog</h1>
       <p className="t-main-subtitle">Actualités tech et savoirs utiles</p>
 
-      <p className="text-md text-zinc-900">Derniers articles</p>
-      <ul className="u-articles-grid">
-        {posts?.map((post, i) => (
-          <li
-            key={i}
-            className="rounded-sm border shadow-md hover:shadow-xl hover:border-zinc-300"
+      <p className="text-md text-zinc-900 mb-4">Derniers articles</p>
+      {posts?.length > 0 ? (
+        <ul className="u-articles-grid">
+          {posts.map((post, i) => (
+            <BlogCard key={i} postInfo={post} />
+          ))}
+        </ul>
+      ) : (
+        <>
+          <p className="text-lg text-center font-semibold">
+            Aucun article disponible pour le moment
+          </p>
+          <Link
+            href={`${DASHBOARD_ROUTE}/create`}
+            className="block text-center underline"
           >
-            <div className="pt-5 px-5 pb-7">
-              <div className="flex items-baseline gap-x-4 text-xs">
-                <time
-                  dateTime={new Date().toISOString()}
-                  className="text-gray-500 text-sm"
-                >
-                  {new Date().toLocaleDateString("fr-FR", {
-                    year: "numeric",
-                    month: "long",
-                    day: "numeric",
-                  })}
-                </time>
-                <Link
-                  href={`${CATEGORIES_ROUTE}/author/johndoe`}
-                  className="ml-auto text-base text-gray-700 hover:text-gray-600 whitespace-nowrap truncate"
-                >
-                  John Doe
-                </Link>
-              </div>
-              <Link
-                href={`${ARTICLE_ROUTE}/${post.slug}`}
-                className="inline-block mt-6 text-xl font-semibold text-zinc-800 hover:text-zinc-600"
-              >
-                {post.title}
-              </Link>
-            </div>
-          </li>
-        ))}
-      </ul>
+            Créez un premier article
+          </Link>
+        </>
+      )}
     </div>
   );
 }
