@@ -13,7 +13,7 @@ const postSchema = new mongoose.Schema(
     },
     markdownHTMLResult: {
       type: String,
-      required: true
+      required: true,
     },
     slug: {
       type: String,
@@ -25,6 +25,10 @@ const postSchema = new mongoose.Schema(
         ref: "Tag",
       },
     ],
+    imageURL: {
+      type: String,
+      required: true,
+    },
   },
   { timestamps: true }
 );
