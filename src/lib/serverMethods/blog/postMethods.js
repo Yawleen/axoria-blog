@@ -31,3 +31,13 @@ export async function getPosts() {
 
   return { success: true, posts };
 }
+
+export async function getUserPostsFromUserID(userId) {
+  await connectToDB();
+
+  const posts = await Post.find({
+    author: userId,
+  }).select("title _id slug");
+
+  return posts;
+}
