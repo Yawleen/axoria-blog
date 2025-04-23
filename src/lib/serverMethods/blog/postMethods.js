@@ -41,3 +41,25 @@ export async function getUserPostsFromUserID(userId) {
 
   return posts;
 }
+
+export async function getPostsByTag(tagSlug) {
+  await connectToDB();
+
+  const tag = await Tag.findOne({
+    slug: tagSlug,
+  });
+
+  if (!tag) {
+    notFound();
+  }
+
+  const posts = await Post.find({ tags: tag._id })
+    .populate({
+      path: "author",
+      select: "userName",
+    })
+    .select("title imageURL slug createdAt")
+    .sort({ createdAt: -1 });
+
+  return posts;
+}
