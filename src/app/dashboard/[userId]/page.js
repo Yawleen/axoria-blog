@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { ARTICLE_ROUTE, DASHBOARD_ROUTE } from "@/config/routes";
 import { getUserPostsFromUserID } from "@/lib/serverMethods/blog/postMethods";
+import DeletePostButton from "@/components/DeletePostButton";
 
 export default async function UserDashboardPage({ params }) {
   const { userId } = await params;
@@ -18,18 +19,18 @@ export default async function UserDashboardPage({ params }) {
             >
               <Link
                 href={`${ARTICLE_ROUTE}/${post.slug}`}
-                className="mr-auto underline underline-offset-2 text-violet-600"
+                className="mr-auto underline underline-offset-2 text-lg text-violet-600"
               >
                 {post.title}
               </Link>
               <div className="flex gap-x-2">
-                <button>Supprimer</button>
                 <Link
                   href={`${DASHBOARD_ROUTE}/edit/${post.slug}`}
                   className="bg-indigo-500 hover:bg-indigo-700 text-white font-bold py-3 px-4 rounded"
                 >
                   Éditer
                 </Link>
+                <DeletePostButton id={post._id.toString()} />
               </div>
             </li>
           ))}

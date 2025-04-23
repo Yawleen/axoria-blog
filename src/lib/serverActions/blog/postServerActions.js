@@ -14,6 +14,7 @@ import "prismjs/components/prism-css";
 import "prismjs/components/prism-javascript";
 import AppError from "@/lib/utils/errorHandling/customError";
 import { sessionInfo } from "@/lib/serverMethods/session/sessionMethods";
+import { revalidatePath } from "next/cache";
 
 const window = new JSDOM("").window;
 const DOMPurify = createDOMPurify(window);
@@ -104,7 +105,7 @@ export async function addPost(formData) {
       markdownHTMLResult,
       tags: tagIds,
       imageURL,
-      author: session.userId
+      author: session.userId,
     });
 
     const savedPost = await newPost.save();
@@ -118,5 +119,32 @@ export async function addPost(formData) {
     }
 
     throw new Error("Une erreur est survenue lors de la création du post.");
+  }
+}
+
+export async function deletePost(id) {
+  try {
+    await connectToDB();
+
+    const session = await sessionInfo();
+    if (!session) {
+      throw new AppError("Authentification requise.");
+    }
+
+    const post = await Post.findById(id);
+    if (!post) {
+      throw new AppError("Le post n'a pas été trouvé.");
+    }
+
+    await Post.findByIdAndDelete(id);
+    revalidatePath(`/article/${post.slug}`);
+  } catch (err) {
+    console.error("Erreur lors de la suppression du post :", err);
+
+    if (err instanceof AppError) {
+      throw err;
+    }
+
+    throw new Error("Une erreur est survenue lors de la suppression du post.");
   }
 }
