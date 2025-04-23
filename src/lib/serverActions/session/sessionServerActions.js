@@ -87,7 +87,7 @@ export async function login(formData) {
   const { userName, password } = Object.fromEntries(formData);
 
   try {
-    connectToDB();
+    await connectToDB();
 
     const user = await User.findOne({ userName });
 
