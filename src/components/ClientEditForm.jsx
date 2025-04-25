@@ -1,5 +1,6 @@
 "use client";
 
+import { editPost } from "@/lib/serverActions/blog/postServerActions";
 import { useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { ARTICLE_ROUTE } from "@/config/routes";
@@ -36,34 +37,33 @@ export default function ClientEditForm({ post }) {
         serverValidationText.current.textContent = "";
 
         formData.set("tags", JSON.stringify(tags));
-        formData.set("slug", post.slug);
         formData.set("imageURL", selectedImageURL);
-        formData.set("postToEdit", post);
+        formData.set("postToEditStringified", JSON.stringify(post));
 
         serverValidationText.current.textContent = "";
         submitButtonRef.current.textContent = "Modification de l'article...";
         submitButtonRef.current.disabled = true;
 
         try {
-            // const result = await editPost(formData);
+            const result = await editPost(formData);
 
-            // if (result.success) {
-            //   submitButtonRef.current.textContent = "Article modifié avec succès";
+            if (result.success) {
+                submitButtonRef.current.textContent = "Article modifié avec succès";
 
-            //   let countdown = 3;
+                let countdown = 3;
 
-            //   serverValidationText.current.textContent = `Redirection dans ${countdown}...`;
+                serverValidationText.current.textContent = `Redirection dans ${countdown}...`;
 
-            //   const interval = setInterval(() => {
-            //     countdown--;
-            //     serverValidationText.current.textContent = `Redirection dans ${countdown}...`;
+                const interval = setInterval(() => {
+                    countdown--;
+                    serverValidationText.current.textContent = `Redirection dans ${countdown}...`;
 
-            //     if (countdown === 0) {
-            //       clearInterval(interval);
-            //       router.push(`${ARTICLE_ROUTE}/${result.slug}`);
-            //     }
-            //   }, 1000);
-            // }
+                    if (countdown === 0) {
+                        clearInterval(interval);
+                        router.push(`${ARTICLE_ROUTE}/${result.slug}`);
+                    }
+                }, 1000);
+            }
         } catch (error) {
             submitButtonRef.current.textContent = "Soumettre";
             serverValidationText.current.textContent = `${error.message}`;

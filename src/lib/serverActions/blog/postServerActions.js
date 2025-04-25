@@ -15,6 +15,8 @@ import "prismjs/components/prism-javascript";
 import AppError from "@/lib/utils/errorHandling/customError";
 import { sessionInfo } from "@/lib/serverMethods/session/sessionMethods";
 import { revalidatePath } from "next/cache";
+import { areTagsSimilar, generateUniqueSlug } from "@/lib/utils/general/utils";
+import { findOrCreateTag } from "@/lib/serverMethods/tag/tagMethods";
 
 const window = new JSDOM("").window;
 const DOMPurify = createDOMPurify(window);
@@ -119,6 +121,73 @@ export async function addPost(formData) {
     }
 
     throw new Error("Une erreur est survenue lors de la création du post.");
+  }
+}
+
+export async function editPost(formData) {
+  const { postToEditStringified, title, markdownArticle, tags, imageURL } =
+    Object.fromEntries(formData);
+  const postToEdit = JSON.parse(postToEditStringified);
+
+  try {
+    await connectToDB();
+
+    const session = await sessionInfo();
+
+    if (!session.success) {
+      throw new Error();
+    }
+
+    const updatedData = {};
+
+    if (typeof title !== "string") throw new Error();
+    if (title.trim() !== postToEdit.title) {
+      updatedData.title = title;
+      updatedData.slug = await generateUniqueSlug(title);
+    }
+
+    if (typeof markdownArticle !== "string") throw new Error();
+    if (markdownArticle.trim() !== postToEdit.markdownArticle) {
+      updatedData.markdownHTMLResult = DOMPurify.sanitize(
+        marked(markdownArticle)
+      );
+      updatedData.markdownArticle = markdownArticle;
+    }
+
+    if (typeof imageURL !== "string") throw new Error();
+    if (imageURL) {
+      updatedData.imageURL = imageURL;
+    }
+
+    if (typeof tags !== "string") throw new Error();
+
+    const tagNamesArray = JSON.parse(tags);
+    if (!Array.isArray(tagNamesArray)) throw new Error();
+
+    if (!areTagsSimilar(tagNamesArray, postToEdit.tags)) {
+      const tagIds = await Promise.all(
+        tagNamesArray.map((tag) => findOrCreateTag(tag))
+      );
+      updatedData.tags = tagIds;
+    }
+
+    if (Object.keys(updatedData).length === 0) throw new Error();
+
+    const updatedPost = await Post.findByIdAndUpdate(
+      postToEdit._id,
+      updatedData,
+      { new: true }
+    );
+
+    return { success: true, slug: updatedPost.slug };
+  } catch (err) {
+    console.error("Erreur lors de la modification du post :", err);
+
+    if (err instanceof AppError) {
+      throw err;
+    }
+
+    throw new Error("Une erreur est survenue lors de la modification du post.");
   }
 }
 
