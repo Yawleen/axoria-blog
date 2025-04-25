@@ -57,7 +57,7 @@ export async function getPostsByTag(tagSlug) {
   const posts = await Post.find({ tags: tag._id })
     .populate({
       path: "author",
-      select: "userName",
+      select: "userName normalizedUserName",
     })
     .select("title imageURL slug createdAt")
     .sort({ createdAt: -1 });
