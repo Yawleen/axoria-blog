@@ -14,7 +14,7 @@ export default async function CategoriesPage() {
           {tags.map((tag) => (
             <li key={tag._id} className="bg-gray-100 border rounded shadow-md">
               <Link
-                href={`${CATEGORIES_ROUTE}/${tag.slug}`}
+                href={`${CATEGORIES_ROUTE}/tag/${tag.slug}`}
                 className="flex flex-wrap p-4 pb-6 gap-2 justify-between items-baseline"
               >
                 <span className="w-[50%] shrink-0 wrap-break-word text-lg underline font-semibold">
