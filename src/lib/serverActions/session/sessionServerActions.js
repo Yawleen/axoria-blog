@@ -8,6 +8,7 @@ import { Session } from "@/lib/models/session";
 import { cookies } from "next/headers";
 import { DASHBOARD_ROUTE, SETTINGS_ROUTE } from "@/config/routes";
 import AppError from "@/lib/utils/errorHandling/customError";
+import { revalidateTag } from "next/cache";
 
 export async function register(formData) {
   const { userName, email, password, passwordRepeat } =
@@ -129,6 +130,7 @@ export async function login(formData) {
         sameSite: "Lax",
       });
 
+      revalidateTag("auth-session");
       return { success: true };
     }
 
@@ -153,9 +155,10 @@ export async function logout() {
       secure: process.env.NODE_ENV === "production",
       path: "/",
       maxAge: 0,
-      sameSite: "script",
+      sameSite: "strict",
     });
 
+    revalidateTag("auth-session");
     return { success: true };
   } catch (error) {
     console.log(error);
