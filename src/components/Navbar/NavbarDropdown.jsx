@@ -7,8 +7,10 @@ import { DASHBOARD_ROUTE, SIGN_IN_ROUTE } from "@/config/routes";
 import { isPrivatePage, logout } from "@/lib/serverActions/session/sessionServerActions";
 import { useRouter } from "next/navigation";
 import { usePathname } from "next/navigation";
+import { useAuth } from "@/app/AuthContext";
 
 export default function NavbarDropdown({ userId }) {
+    const { isAuthenticated, setIsAuthenticated } = useAuth();
     const [isOpen, setIsOpen] = useState(false);
     const dropdownRef = useRef(null);
     const router = useRouter();
@@ -18,11 +20,28 @@ export default function NavbarDropdown({ userId }) {
     const closeDropdown = () => setIsOpen(false);
 
     const handleLogout = async () => {
-        await logout();
+        setIsAuthenticated({
+            ...isAuthenticated, loading: true
+        })
 
-        if (isPrivatePage(pathname)) {
-            router.push(SIGN_IN_ROUTE);
+        const result = await logout();
+
+        if (result.success) {
+            setIsAuthenticated({
+                loading: false,
+                isConnected: false,
+                userId: null
+            })
+
+            if (isPrivatePage(pathname)) {
+                router.push(SIGN_IN_ROUTE);
+            }
+            return
         }
+
+        setIsAuthenticated({
+            ...isAuthenticated, loading: false
+        })
     };
 
     useEffect(() => {
