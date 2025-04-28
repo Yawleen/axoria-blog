@@ -4,8 +4,10 @@ import { login } from "@/lib/serverActions/session/sessionServerActions";
 import { useRouter } from "next/navigation";
 import { useRef } from "react";
 import { HOME_ROUTE } from "@/config/routes";
+import { useAuth } from "@/app/AuthContext";
 
 export default function SignInPage() {
+  const { isAuthenticated, setIsAuthenticated } = useAuth();
   const serverInfoRef = useRef(null);
   const submitButtonRef = useRef(null);
   const router = useRouter();
@@ -16,19 +18,40 @@ export default function SignInPage() {
     const formData = new FormData(e.target);
 
     serverInfoRef.current.textContext = "";
+    serverInfoRef.current.classList.add("hidden");
     submitButtonRef.current.disabled = true;
+    submitButtonRef.current.textContent = "Connexion en cours...";
+
+    setIsAuthenticated({
+      ...isAuthenticated,
+      loading: true,
+    });
 
     try {
       const result = await login(formData);
 
       if (result.success) {
+        setIsAuthenticated({
+          loading: false,
+          isConnected: result.success,
+          userId: result.userId,
+        });
         router.push(HOME_ROUTE);
+        return;
       }
     } catch (error) {
-      submitButtonRef.current.textContent = "Soumettre";
       serverInfoRef.current.textContent = `${error.message}`;
+      serverInfoRef.current.classList.remove("hidden");
+      submitButtonRef.current.textContent = "Soumettre";
       submitButtonRef.current.disabled = false;
     }
+
+    setIsAuthenticated({
+      ...isAuthenticated,
+      loading: false,
+    });
+
+    window.scrollTo(0, document.body.scrollHeight);
   };
 
   return (
@@ -58,9 +81,8 @@ export default function SignInPage() {
       />
       <p
         ref={serverInfoRef}
-        className="font-semibold text-red-500 text-center"
+        className="hidden font-semibold text-red-500 text-center"
       ></p>
-
       <button
         ref={submitButtonRef}
         className="w-full bg-indigo-500 hover:bg-indigo-700 text-white font-bold

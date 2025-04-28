@@ -16,10 +16,10 @@ export default function SignUpPage() {
 
     const formData = new FormData(e.target);
 
-    serverInfoRef.current.classList.add("hidden");
     serverInfoRef.current.textContent = "";
-    submitButtonRef.current.textContent = "Création de l'utilisateur...";
+    serverInfoRef.current.classList.add("hidden");
     submitButtonRef.current.disabled = true;
+    submitButtonRef.current.textContent = "Création de l'utilisateur...";
 
     try {
       const result = await register(formData);
@@ -40,13 +40,16 @@ export default function SignUpPage() {
             router.push(HOME_ROUTE);
           }
         }, 1000);
+        return;
       }
     } catch (error) {
-      submitButtonRef.current.textContent = "Soumettre";
-      serverInfoRef.current.classList.remove("hidden");
       serverInfoRef.current.textContent = `${error.message}`;
+      serverInfoRef.current.classList.remove("hidden");
+      submitButtonRef.current.textContent = "Soumettre";
       submitButtonRef.current.disabled = false;
     }
+
+    window.scrollTo(0, document.body.scrollHeight);
   };
 
   return (
