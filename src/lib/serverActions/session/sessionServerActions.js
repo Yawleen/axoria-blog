@@ -15,9 +15,13 @@ export async function register(formData) {
     Object.fromEntries(formData);
 
   try {
-    if (typeof userName !== "string" || userName.trim().length < 3) {
+    if (
+      typeof userName !== "string" ||
+      userName.trim().length < 3 ||
+      !/^[a-zA-Z0-9_]+$/.test(userName)
+    ) {
       throw new AppError(
-        "Le nom d'utilisateur doit contenir au moins 3 caractères."
+        "Le nom d'utilisateur doit contenir au moins 3 caractères (hors caractères spéciaux)."
       );
     }
 
@@ -131,7 +135,7 @@ export async function login(formData) {
       });
 
       revalidateTag("auth-session");
-      return { success: true };
+      return { success: true, userId: user._id.toString() };
     }
 
     throw new Error("Les identifiants saisis sont incorrects.");
@@ -169,7 +173,7 @@ export async function isPrivatePage(pathname) {
   const privateSegments = [DASHBOARD_ROUTE, `${SETTINGS_ROUTE}/profile`];
 
   return privateSegments.some(
-    (segment) => pathname === segment || path.startsWith(segment + "/")
+    (segment) => pathname === segment || pathname.startsWith(segment + "/")
   );
 }
 
