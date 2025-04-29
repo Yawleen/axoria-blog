@@ -33,7 +33,7 @@ export default function NavbarDropdown({ userId }) {
                 userId: null
             })
 
-            if (isPrivatePage(pathname)) {
+            if (await isPrivatePage(pathname)) {
                 router.push(SIGN_IN_ROUTE);
             }
             return
