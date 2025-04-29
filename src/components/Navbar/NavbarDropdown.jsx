@@ -57,7 +57,7 @@ export default function NavbarDropdown({ userId }) {
     }, [])
 
     return (
-        <div ref={dropdownRef} className="relative">
+        <div ref={dropdownRef} className="relative shrink-0">
             <button onClick={toggleDropdown} className="flex">
                 <Image
                     src="/icons/user.svg"
