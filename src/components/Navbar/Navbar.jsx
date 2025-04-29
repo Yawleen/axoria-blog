@@ -10,7 +10,7 @@ export default function Navbar() {
     const { isAuthenticated } = useAuth();
 
     return (
-        <nav className="fixed w-full bg-slate-50 border-b border-b-zinc-300">
+        <nav className="fixed w-full bg-slate-50 border-b border-b-zinc-300 z-[999]">
             <div className="u-main-container flex items-center py-4">
                 <Link href={HOME_ROUTE} className="uppercase mr-4 text-zinc-900">Axoria</Link>
                 <Link href={CATEGORIES_ROUTE} className="text-zinc-900 mr-auto">Catégories</Link>
