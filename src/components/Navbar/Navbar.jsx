@@ -30,7 +30,7 @@ export default function Navbar() {
 
                 {!isAuthenticated.isConnected && !isAuthenticated.loading && (
                     <>
-                        <Link href={SIGN_UP_ROUTE} className="text-zinc-900 mr-2">S'inscrire</Link>
+                        <Link href={SIGN_UP_ROUTE} className="text-zinc-900 mr-2">S&apos;inscrire</Link>
                         <Link href={SIGN_IN_ROUTE} className="text-zinc-900">Se connecter</Link>
                     </>
                 )}

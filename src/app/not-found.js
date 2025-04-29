@@ -7,7 +7,7 @@ export default function NotFoundPage() {
       <h1 className="text-4xl mb-4">404 - Page introuvable.</h1>
       <p className="mb-2">La ressource demandée est introuvable.</p>
       <Link href={HOME_ROUTE} className="underline">
-        Retourner à la page d'accueil
+        Retourner à la page d&apos;accueil
       </Link>
     </div>
   );

@@ -23,7 +23,7 @@ export default async function CategoriesPage() {
                   #{tag.name}
                 </span>
                 <span>
-                  Nb d'articles :{" "}
+                  Nb d&apos;articles :{" "}
                   <span className="font-semibold">{tag.postCount}</span>
                 </span>
               </Link>

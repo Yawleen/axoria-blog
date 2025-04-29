@@ -8,7 +8,7 @@ export default function error() {
     <div className="pt-44 text-center">
       <h1 className="text-4xl mb-4">Une erreur serveur est survenue.</h1>
       <Link href={HOME_ROUTE} className="underline">
-        Retourner à la page d'accueil
+        Retourner à la page d&apos;accueil
       </Link>
     </div>
   );

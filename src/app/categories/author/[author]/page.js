@@ -11,7 +11,7 @@ export default async function AuthorPage({ params }) {
     <main className="u-main-container u-padding-content-container">
       <h1 className="t-main-title">Articles de {data.author.userName}</h1>
       <p className="t-main-subtitle">
-        Tous les articles associés à l'auteur {data.author.userName}
+        Tous les articles associés à l&apos;auteur {data.author.userName}
       </p>
       <p className="mr-4 text-md text-zinc-900">Derniers articles</p>
 

@@ -36,7 +36,7 @@ export default async function UserDashboardPage({ params }) {
           ))}
         </ul>
       ) : (
-        <p>Vous n'avez pas encore créé d'articles.</p>
+        <p>Vous n&apos;avez pas encore créé d&apos;articles.</p>
       )}
     </main>
   );
