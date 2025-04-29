@@ -25,7 +25,7 @@ export default async function UserDashboardPage({ params }) {
               </Link>
               <div className="flex gap-x-2">
                 <Link
-                  href={`${DASHBOARD_ROUTE}/edit/${post.slug}`}
+                  href={`${DASHBOARD_ROUTE}/edit/${post._id}`}
                   className="bg-indigo-500 hover:bg-indigo-700 text-white font-bold py-3 px-4 rounded"
                 >
                   Éditer

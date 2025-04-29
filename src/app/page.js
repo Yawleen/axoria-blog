@@ -3,6 +3,8 @@ import { getPosts } from "@/lib/serverMethods/blog/postMethods";
 import BlogCard from "@/components/BlogCard";
 import { DASHBOARD_ROUTE } from "@/config/routes";
 
+export const revalidate = 60;
+
 export default async function Home() {
   const { posts } = await getPosts();
 

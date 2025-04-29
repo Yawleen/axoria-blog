@@ -179,6 +179,8 @@ export async function editPost(formData) {
       { new: true }
     );
 
+    revalidatePath(`/article/${postToEdit.slug}`);
+
     return { success: true, slug: updatedPost.slug };
   } catch (err) {
     console.error("Erreur lors de la modification du post :", err);
