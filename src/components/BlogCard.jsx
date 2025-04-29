@@ -13,7 +13,7 @@ export default function BlogCard({ postInfo }) {
                     width={340}
                     height={190}
                     alt={`Image de description de l'article : ${postInfo.title}`}
-                    className="w-full rounded-t-sm object-cover"
+                    className="w-full h-[190px] rounded-t-sm object-cover"
                 />
             </Link>
             <div className="pt-5 px-5 pb-7">
