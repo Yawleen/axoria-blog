@@ -5,6 +5,7 @@ import { useState, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { ARTICLE_ROUTE } from "@/config/routes";
 import { getImagesFromPexels } from "@/lib/serverActions/blog/imagesServerAction";
+import Image from "next/image";
 
 export default function CreateArticlePage() {
   const tagInput = useRef(null);
@@ -234,17 +235,19 @@ export default function CreateArticlePage() {
           {images.length > 0 && (
             <div className="grid grid-cols-2 md:grid-cols-3 gap-4 p-4 max-h-[200px] overflow-y-auto mb-2">
               {images.map((img) => (
-                <img
-                  key={img.id}
-                  src={img.src.medium}
-                  alt={img.alt}
-                  className={`${
-                    img.src.large === selectedImageURL
-                      ? "border-indigo-500 scale-105"
-                      : "border-transparent"
-                  } border border-3 w-full h-full object-cover rounded cursor-pointer`}
-                  onClick={() => selectImage(img.src.large)}
-                />
+                <div key={img.id} className="relative h-[200px]">
+                  <Image
+                    src={img.src.medium}
+                    alt={img.alt}
+                    fill
+                    className={`${
+                      img.src.large === selectedImageURL
+                        ? "border-indigo-500 scale-105"
+                        : "border-transparent"
+                    } border border-3 object-cover rounded cursor-pointer`}
+                    onClick={() => selectImage(img.src.large)}
+                  />
+                </div>
               ))}
             </div>
           )}

@@ -6,6 +6,7 @@ import { useRouter } from "next/navigation";
 import { ARTICLE_ROUTE } from "@/config/routes";
 import { getImagesFromPexels } from "@/lib/serverActions/blog/imagesServerAction";
 import { areTagsSimilar } from "@/lib/utils/general/utils";
+import Image from "next/image";
 
 export default function ClientEditForm({ post }) {
     const tagInput = useRef(null);
@@ -223,7 +224,7 @@ export default function ClientEditForm({ post }) {
                 </div>
                 {defaultImage && (<>
                     <p className="text-sm font-semibold mb-1">Image par défaut :</p>
-                    <img src={defaultImage} alt={`Image de l'article ${post.title}`} className="h-[200px] rounded mb-2" />
+                    <Image src={defaultImage} alt={`Image de l'article ${post.title}`} width={400} height={200} className="h-auto rounded mb-2" />
                 </>)}
                 <label htmlFor="image" className="f-label">
                     Sélectionnez une image
@@ -251,14 +252,15 @@ export default function ClientEditForm({ post }) {
                     {images.length > 0 && (
                         <div className="grid grid-cols-2 md:grid-cols-3 gap-4 p-4 max-h-[200px] overflow-y-auto mb-2">
                             {images.map((img) => (
-                                <img
+                                <Image
                                     key={img.id}
                                     src={img.src.medium}
                                     alt={img.alt}
+                                    fill
                                     className={`${img.src.large === selectedImageURL
                                         ? "border-indigo-500 scale-105"
                                         : "border-transparent"
-                                        } border border-3 w-full h-full object-cover rounded cursor-pointer`}
+                                        } border border-3 object-cover rounded cursor-pointer`}
                                     onClick={() => selectImage(img.src.large)}
                                 />
                             ))}
