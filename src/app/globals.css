@@ -33,7 +33,7 @@ button {
 }
 
 .u-padding-content-container {
-  @apply pt-32 pb-44;
+  @apply pt-50 sm:pt-32 pb-44;
 }
 
 .u-articles-grid {
