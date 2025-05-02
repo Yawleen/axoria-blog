@@ -4,10 +4,10 @@ import Link from "next/link";
 import { useRef } from "react";
 import { register } from "@/lib/serverActions/session/sessionServerActions";
 import { useRouter } from "next/navigation";
-import { HOME_ROUTE } from "@/config/routes";
+import { SIGN_IN_ROUTE } from "@/config/routes";
+import toast, { Toaster } from "react-hot-toast";
 
 export default function SignUpPage() {
-  const serverInfoRef = useRef(null);
   const submitButtonRef = useRef(null);
   const router = useRouter();
 
@@ -16,8 +16,6 @@ export default function SignUpPage() {
 
     const formData = new FormData(e.target);
 
-    serverInfoRef.current.textContent = "";
-    serverInfoRef.current.classList.add("hidden");
     submitButtonRef.current.disabled = true;
     submitButtonRef.current.textContent = "Création de l'utilisateur...";
 
@@ -25,97 +23,99 @@ export default function SignUpPage() {
       const result = await register(formData);
 
       if (result.success) {
-        submitButtonRef.current.textContent = "Utilisateur créé avec succès";
-
-        let countdown = 3;
-        serverInfoRef.current.classList.remove("hidden");
-        serverInfoRef.current.textContent = `Redirection dans ${countdown}...`;
-
-        const interval = setInterval(() => {
-          countdown--;
-          serverInfoRef.current.textContent = `Redirection dans ${countdown}...`;
-
-          if (countdown === 0) {
-            clearInterval(interval);
-            router.push(HOME_ROUTE);
+        toast.success("Utilisateur créé avec succès", {
+          removeDelay: 3000,
+        });
+        toast.promise(
+          () => {
+            return new Promise((resolve) => {
+              setTimeout(() => {
+                resolve();
+              }, 5000);
+            }).then(
+              router.push(`${SIGN_IN_ROUTE}?pseudo=${formData.get("userName")}`)
+            );
+          },
+          {
+            loading: "Redirection vers la page de connexion...",
           }
-        }, 1000);
-        return;
+        );
       }
     } catch (error) {
-      serverInfoRef.current.textContent = `${error.message}`;
-      serverInfoRef.current.classList.remove("hidden");
+      toast.error(error.message, {
+        removeDelay: 4000,
+      });
       submitButtonRef.current.textContent = "Soumettre";
       submitButtonRef.current.disabled = false;
     }
-
-    window.scrollTo(0, document.body.scrollHeight);
   };
 
   return (
-    <form onSubmit={handleSubmit} className="max-w-md mx-auto my-36">
-      <label htmlFor="userName" className="f-label">
-        Nom ou pseudo
-      </label>
-      <input
-        className="f-auth-input"
-        type="text"
-        id="userName"
-        name="userName"
-        placeholder="Nom ou pseudo"
-        required
-      />
+    <>
+      <Toaster />
+      <form onSubmit={handleSubmit} className="max-w-md mx-auto my-36">
+        <label htmlFor="userName" className="f-label">
+          Nom ou pseudo
+        </label>
+        <input
+          className="f-auth-input"
+          type="text"
+          id="userName"
+          name="userName"
+          placeholder="Nom ou pseudo"
+          required
+        />
 
-      <label htmlFor="email" className="f-label">
-        E-mail
-      </label>
-      <input
-        className="f-auth-input"
-        type="email"
-        id="email"
-        name="email"
-        placeholder="E-mail"
-        required
-      />
+        <label htmlFor="email" className="f-label">
+          E-mail
+        </label>
+        <input
+          className="f-auth-input"
+          type="email"
+          id="email"
+          name="email"
+          placeholder="E-mail"
+          required
+        />
 
-      <label htmlFor="password" className="f-label">
-        Mot de passe
-      </label>
-      <input
-        className="f-auth-input"
-        type="password"
-        id="password"
-        name="password"
-        placeholder="Mot de passe"
-        required
-      />
+        <label htmlFor="password" className="f-label">
+          Mot de passe
+        </label>
+        <input
+          className="f-auth-input"
+          type="password"
+          id="password"
+          name="password"
+          placeholder="Mot de passe"
+          required
+        />
 
-      <label htmlFor="passwordRepeat" className="f-label">
-        Confirmation du mot de passe
-      </label>
-      <input
-        className="f-auth-input"
-        type="password"
-        id="passwordRepeat"
-        name="passwordRepeat"
-        placeholder="Confirmation du mot de passe"
-        required
-      />
+        <label htmlFor="passwordRepeat" className="f-label">
+          Confirmation du mot de passe
+        </label>
+        <input
+          className="f-auth-input"
+          type="password"
+          id="passwordRepeat"
+          name="passwordRepeat"
+          placeholder="Confirmation du mot de passe"
+          required
+        />
 
-      <button
-        ref={submitButtonRef}
-        className="w-full bg-indigo-500 hover:bg-indigo-700 text-white font-bold
-       py-3 px-4 my-10 rounded border-none"
-      >
-        Soumettre
-      </button>
-      <p ref={serverInfoRef} className="hidden text-center mb-10"></p>
-      <Link
-        href="/signin"
-        className="underline text-blue-600 block text-center"
-      >
-        Vous avez déjà un compte ? Connectez-vous
-      </Link>
-    </form>
+        <button
+          ref={submitButtonRef}
+          className="w-full bg-indigo-500 hover:bg-indigo-700 text-white font-bold
+        py-3 px-4 my-10 rounded border-none"
+        >
+          Soumettre
+        </button>
+        <Link
+          href="/signin"
+          className="underline text-blue-600 block text-center"
+        >
+          Vous avez déjà un compte ? Connectez-vous
+        </Link>
+      </form>
+    </>
   );
 }
