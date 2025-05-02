@@ -19,30 +19,28 @@ export default function SignUpPage() {
     submitButtonRef.current.disabled = true;
     submitButtonRef.current.textContent = "Création de l'utilisateur...";
 
-    try {
-      const result = await register(formData);
+    const result = await register(formData);
 
-      if (result.success) {
-        toast.success("Utilisateur créé avec succès", {
-          removeDelay: 3000,
-        });
-        toast.promise(
-          () => {
-            return new Promise((resolve) => {
-              setTimeout(() => {
-                resolve();
-              }, 5000);
-            }).then(
-              router.push(`${SIGN_IN_ROUTE}?pseudo=${formData.get("userName")}`)
-            );
-          },
-          {
-            loading: "Redirection vers la page de connexion...",
-          }
-        );
-      }
-    } catch (error) {
-      toast.error(error.message, {
+    if (result.success) {
+      toast.success("Utilisateur créé avec succès", {
+        removeDelay: 3000,
+      });
+      toast.promise(
+        () => {
+          return new Promise((resolve) => {
+            setTimeout(() => {
+              resolve();
+            }, 5000);
+          }).then(
+            router.push(`${SIGN_IN_ROUTE}?pseudo=${formData.get("userName")}`)
+          );
+        },
+        {
+          loading: "Redirection vers la page de connexion...",
+        }
+      );
+    } else {
+      toast.error(result.message, {
         removeDelay: 4000,
       });
       submitButtonRef.current.textContent = "Soumettre";

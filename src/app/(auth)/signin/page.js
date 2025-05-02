@@ -27,30 +27,26 @@ export default function SignInPage() {
       loading: true,
     });
 
-    try {
-      const result = await login(formData);
+    const result = await login(formData);
 
-      if (result.success) {
-        setIsAuthenticated({
-          loading: false,
-          isConnected: result.success,
-          userId: result.userId,
-        });
-        router.push(HOME_ROUTE);
-        return;
-      }
-    } catch (error) {
-      toast.error(error.message, {
+    if (result.success) {
+      setIsAuthenticated({
+        loading: false,
+        isConnected: result.success,
+        userId: result.userId,
+      });
+      router.push(HOME_ROUTE);
+    } else {
+      toast.error(result.message, {
         removeDelay: 3000,
       });
       submitButtonRef.current.textContent = "Soumettre";
       submitButtonRef.current.disabled = false;
+      setIsAuthenticated({
+        ...isAuthenticated,
+        loading: false,
+      });
     }
-
-    setIsAuthenticated({
-      ...isAuthenticated,
-      loading: false,
-    });
   };
 
   return (
