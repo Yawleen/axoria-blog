@@ -6,11 +6,13 @@ import { useRef } from "react";
 import { HOME_ROUTE } from "@/config/routes";
 import { useAuth } from "@/app/AuthContext";
 import toast, { Toaster } from "react-hot-toast";
+import { useSearchParams } from "next/navigation";
 
 export default function SignInPage() {
   const { isAuthenticated, setIsAuthenticated } = useAuth();
   const submitButtonRef = useRef(null);
   const router = useRouter();
+  const { pseudo } = Object.fromEntries(useSearchParams());
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -63,6 +65,7 @@ export default function SignInPage() {
           className="f-auth-input"
           id="userName"
           name="userName"
+          {...(pseudo && { defaultValue: pseudo })}
           required
           placeholder="Pseudo"
         />
