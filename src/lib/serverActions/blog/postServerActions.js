@@ -117,10 +117,13 @@ export async function addPost(formData) {
     console.error("Erreur lors de la création du post :", err);
 
     if (err instanceof AppError) {
-      throw err;
+      return { success: false, message: err.message };
     }
 
-    throw new Error("Une erreur est survenue lors de la création du post.");
+    return {
+      success: false,
+      message: "Une erreur est survenue lors de la création du post.",
+    };
   }
 }
 
@@ -186,10 +189,13 @@ export async function editPost(formData) {
     console.error("Erreur lors de la modification du post :", err);
 
     if (err instanceof AppError) {
-      throw err;
+      return { success: false, message: err.message };
     }
 
-    throw new Error("Une erreur est survenue lors de la modification du post.");
+    return {
+      success: false,
+      message: "Une erreur est survenue lors de la modification du post.",
+    };
   }
 }
 
@@ -213,9 +219,12 @@ export async function deletePost(id) {
     console.error("Erreur lors de la suppression du post :", err);
 
     if (err instanceof AppError) {
-      throw err;
+      return { success: false, message: err.message };
     }
 
-    throw new Error("Une erreur est survenue lors de la suppression du post.");
+    return {
+      success: false,
+      message: "Une erreur est survenue lors de la suppression du post.",
+    };
   }
 }

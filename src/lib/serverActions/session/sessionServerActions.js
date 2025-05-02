@@ -81,10 +81,13 @@ export async function register(formData) {
     console.error("Erreur lors de l'inscription :", err);
 
     if (err instanceof AppError) {
-      throw err;
+      return { success: false, message: err.message };
     }
 
-    throw new Error("Une erreur est survenue lors de l'inscription.");
+    return {
+      success: false,
+      message: "Une erreur est survenue lors de l'inscription.",
+    };
   }
 }
 
@@ -141,9 +144,11 @@ export async function login(formData) {
     throw new Error("Les identifiants saisis sont incorrects.");
   } catch (err) {
     console.log("Une erreur est survenue au moment de la connexion :", err);
-    throw new Error(
-      err.message || "Une erreur est survenue au moment de la connexion."
-    );
+    return {
+      success: false,
+      message:
+        err.message || "Une erreur est survenue au moment de la connexion.",
+    };
   }
 }
 
@@ -164,8 +169,8 @@ export async function logout() {
 
     revalidateTag("auth-session");
     return { success: true };
-  } catch (error) {
-    console.log(error);
+  } catch (err) {
+    console.log(err);
   }
 }
 
